@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-
+const Subscriber = require('../models/subscriber')
 router.get('/',function(req,res){
     res.send('This is router get request.')
 })

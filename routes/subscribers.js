@@ -1,15 +1,35 @@
 const express = require('express')
 const router = express.Router()
 const Subscriber = require('../models/subscriber')
-router.get('/',function(req,res){
-    res.send('This is router get request.')
+
+router.get('/',async function(req,res){
+    try{
+        const subscribers = await Subscriber.find()
+        res.json(subscribers)
+
+    } catch(err) {
+        res.status(500).json({message:err.message})
+
+    }
 })
 
-router.get('/:id',function(req,res){
+router.get('/:id', function(req,res){
     res.send(req.params.id)
 })
 
-router.post('/',function(req,res){
+router.post('/',async function(req,res){
+    const subscriber = new Subscriber({
+        name: req.body.name,
+        subscriber: req.body.subscriber
+
+    })
+    try{
+        const newSubscriber = await subscriber.save()
+        res.status(201).json(newSubscriber)
+
+    } catch(err){
+        res.status(400).json({message: err.message})
+    }
     
 })
 

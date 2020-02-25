@@ -13,9 +13,27 @@ router.get('/',async function(req,res){
     }
 })
 
-router.get('/:id', function(req,res){
-    res.send(req.params.id)
+
+router.get('/:id',getSubscriber,function(req,res){
+    res.json(res.subscriber)
+
 })
+
+async function getSubscriber(req,res,next){
+    let subscriber
+    try{
+        subscriber = await Subscriber.findById(req.params.id)
+        if (subscriber == null){
+            return res.status(404).json({message: "Cant find the subscriber"})
+        }
+
+    } catch (err) {
+        return res.status(500).json({message: err.message})
+    }
+    res.subscriber = subscriber
+    next()
+
+}
 
 router.post('/',async function(req,res){
     const subscriber = new Subscriber({
@@ -33,12 +51,17 @@ router.post('/',async function(req,res){
     
 })
 
-router.patch('/',function(req,res){
+router.patch('/',getSubscriber, async function(req,res){
     
 })
 
-router.delete('/:id',function(req,res){
-    
+router.delete('/:id',getSubscriber, async function(req,res){
+    try {
+        await res.subscriber.remove()
+        res.json({ message: "Subscriber is deleted"})
+    } catch (err) {
+        res.status(500).json({message: err.message})
+    }
 })
 
 
